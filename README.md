@@ -1,4 +1,4 @@
-# OmaTools-FloatingCamera
+# OmaTools-RTSCamera
 A strategy like camera rig for Unity3d
 
 > Summary: This is a simple and easy to use camera system for strategy-like games.
