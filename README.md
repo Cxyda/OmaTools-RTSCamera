@@ -13,7 +13,10 @@ A strategy like camera rig for Unity3d
 ## How to 'install'
 *Using Unity's package manager (Unity3D 2018.3+)*
 1) Open the **manifest.json** file in you ./packages/ folder in your unity project
-2) add **"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git",** to your dependencies.
+2) add 
+> **"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git",** 
+
+to your dependencies.
   > NOTE: don't forget to add the comma ',' at the end of the line OR at the line above the line you added
 3) Go back to Unity and your Packages should be updated.
 
