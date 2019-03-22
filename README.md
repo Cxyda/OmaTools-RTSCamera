@@ -10,16 +10,26 @@ A strategy like camera rig for Unity3d
 - Camera bounds can be specified where camera movement is allowed.
 - Easy to use and setup
 
+## How to 'install'
+*Using Unity's package manager (Unity3D 2018.3+)*
+1) Open the **manifest.json** file in you ./packages/ folder in your unity project
+2) add **"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git",** to your dependencies.
+  > NOTE: don't forget to add the comma ',' at the end of the line OR at the line above the line you added
+3) Go back to Unity and your Packages should be updated.
+
+*Using Unity 2018.2.X and below*
+1) Clone / Copy this repsitory to your **./Assets/Plugins/O.M.A.Games/RTS Camera/** Folder
+2) You do also need the O.M.A.Tools Core package: https://github.com/Cxyda/OmaTools-Core
+
 ## How To Setup
-1) Clone / copy the *O.M.A.Games* folder to your */Assets/Plugins/* folder.
-2) Select *O.M.A.Tools > Cameras > Create FloatingCamera* from Unity's tools menu
-3) The *FloatingCameraRig* GameObject will be spawned in the Inspector.
+2) In Unity Select *O.M.A.Tools > Cameras > Create RTSCamera* from Unity's tools menu
+3) The *RTSCameraRig* GameObject will be spawned in the Inspector.
 
 ## How To Customize
-1) The settings file is located at */Assets/Plugins/O.M.A.Games/FloatingCamera/Settings*
+1) The settings file is located at **/Assets/Plugins/O.M.A.Games/RTSCamera/Settings**
 2) Enable the features you like
 3) Hit the Play! button
-4) Tweak the settings of the FloatingCameraSettings ScriptableObject
+4) Tweak the settings of the RTSCameraSettings ScriptableObject
 
 ## Trouble Shooting
 - Make sure the *FloatingCameraRig* is **ABOVE** you terrain / object you want to float on. Otherwise the height recognizion will not work
