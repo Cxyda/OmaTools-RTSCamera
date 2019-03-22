@@ -13,5 +13,6 @@
 	"src": "Assets/Plugins/O.M.A.Games/RTS_Camera",
 	"author": "cxyda <cxyda@polybeast.de> (https://github.com/Cxyda)",
 	"dependencies": {
+		"de.oma.tools.core": "0.1.0"
 	}
 }
