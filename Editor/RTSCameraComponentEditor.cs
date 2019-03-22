@@ -18,7 +18,6 @@ namespace Plugins.O.M.A.Games.RTSCamera.Editor
         public override void OnInspectorGUI()
         {
             var myTarget = (RTSCameraComponent)target;
-            var options = new List<string>();
             
             if (!myTarget.EnableCameraBounds)
             {
