@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de1615f013042f4af94b230571b6dee, type: 3}
+  m_Name: RTSCameraSettings
+  m_EditorClassIdentifier: 
+  InitialTransformData:
+    InitialPosition: {x: 0, y: 0, z: 0}
+    InitialRotation: {x: 40, y: 0}
+  EnableSurfaceFloating: 1
+  SurfaceData:
+    SurfaceMask:
+      serializedVersion: 2
+      m_Bits: 512
+    FloatingHeight: 20
+  EnableKeyboardMovement: 1
+  KeyboardData:
+    Acceleration: 0.1
+    Damping: 0.1
+    MaxCameraSpeed: 1.8
+    ForwardKey: 119
+    RightKey: 100
+    BackKey: 115
+    LeftKey: 97
+  EnableMouseMovement: 1
+  MouseData:
+    Acceleration: 6.73
+    Damping: 0.001
+    MaxCameraSpeed: 10
+    TopScrollPadding: 80
+    LeftScrollPadding: 100
+    BottomScrollPadding: 80
+    RightScrollPadding: 100
+  PivotOffset: 50
+  EnableMouseRotation: 1
+  RotationControlData:
+    RotationTrigger: 1
+    RotationSensitivity: 0.2
+    InvertRotationAxis: 0
