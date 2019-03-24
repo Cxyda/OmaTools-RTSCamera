@@ -1,9 +1,9 @@
 using Plugins.O.M.A.Games.Core;
-using Plugins.O.M.A.Games.RTSCamera.Core;
+using Plugins.O.M.A.Games.RTS_Camera.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace Plugins.O.M.A.Games.RTSCamera
+namespace Plugins.O.M.A.Games.RTS_Camera
 {
     /// <summary>
     /// This class is responsible for creating the RTSCameraRig

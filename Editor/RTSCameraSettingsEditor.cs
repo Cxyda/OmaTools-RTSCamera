@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Plugins.O.M.A.Games.RTSCamera.Core;
+using Plugins.O.M.A.Games.RTS_Camera.Core;
 using UnityEditor;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Editor
@@ -11,6 +11,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Editor
         private SerializedProperty _enableSurfaceFloatingData;
         private SerializedProperty _surfaceFloatingData;
         
+        private SerializedProperty _movementData;
         private SerializedProperty _keyboardData;
         private SerializedProperty _mouseData;
         
@@ -20,7 +21,8 @@ namespace Plugins.O.M.A.Games.RTSCamera.Editor
         private void OnEnable()
         {
             _surfaceFloatingData = serializedObject.FindProperty("SurfaceData");
-                
+
+            _movementData = serializedObject.FindProperty("CameraMovementData");
             _keyboardData = serializedObject.FindProperty("KeyboardData");
             _mouseData = serializedObject.FindProperty("MouseData");
             _cameraZoomData = serializedObject.FindProperty("CameraZoomData");
@@ -37,6 +39,11 @@ namespace Plugins.O.M.A.Games.RTSCamera.Editor
         {
             var myTarget = (RTSCameraSettings)target;
             var options = new List<string>();
+            
+            if (!myTarget.EnableKeyboardMovement && !myTarget.EnableMouseMovement)
+            {
+                options.Add("CameraMovementData");
+            }
             
             if (!myTarget.EnableSurfaceFloating)
             {

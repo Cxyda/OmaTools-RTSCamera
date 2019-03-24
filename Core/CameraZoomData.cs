@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using UnityEngine.Animations;
 
-namespace Plugins.O.M.A.Games.RTSCamera.Core
+namespace Plugins.O.M.A.Games.RTS_Camera.Core
 {
     /// <summary>
     /// TODO: 
@@ -11,10 +10,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Core
     public struct CameraZoomData
     {
         public string ZoomAxisName;
-
+        [Tooltip("The zoom speed for the camera")]
         public float ZoomSpeed;
         
+        [Tooltip("The minimum camera field of view")]
         public float MinFOV;
+        [Tooltip("The maximum camera field of view")]
         public float MaxFOV;
 
         public AnimationCurve CameraPitchingCurve;

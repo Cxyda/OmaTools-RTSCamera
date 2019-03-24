@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Plugins.O.M.A.Games.RTS_Camera;
 using UnityEditor;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Editor

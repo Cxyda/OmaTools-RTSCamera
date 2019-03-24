@@ -1,10 +1,9 @@
-﻿using System;
-using Plugins.O.M.A.Games.Core.ErrorHandling;
-using Plugins.O.M.A.Games.RTSCamera.Core;
+﻿using Plugins.O.M.A.Games.Core.ErrorHandling;
+using Plugins.O.M.A.Games.RTS_Camera.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Plugins.O.M.A.Games.RTSCamera
+namespace Plugins.O.M.A.Games.RTS_Camera
 {
     /// <summary>
     /// The <see cref="RTSCameraComponent"/> is a Unity3D component to easily control a floating camera over a given
@@ -29,6 +28,17 @@ namespace Plugins.O.M.A.Games.RTSCamera
         private Camera _camera;
         private Vector3 _cameraVelocity;
         private float _cameraSpeed;
+
+        private bool _playerControlsCamera;
+
+        private Transform _cameraTarget;
+        private float _transitionStartTime;
+        
+        public void SwitchTarget(Transform cameraTarget)
+        {
+            _cameraTarget = cameraTarget;
+            _transitionStartTime = Time.time;
+        }
         
         private void Awake()
         {
@@ -50,28 +60,87 @@ namespace Plugins.O.M.A.Games.RTSCamera
 
             Debug.DrawRay(CameraPivot.transform.position, CameraPivot.forward * 10, Color.red);
 
+            CheckIfCameraTargetClicked();
+
+            CaptureKeyboardControls();
+            CaptureMouseControls();
             CaptureCameraZoom();
             CaptureMouseRotation();
-            LimitCameraMovement();
 
+            LimitCameraMovement();
         }
-        private void FixedUpdate()
+
+        private void LateUpdate()
         {
             if (!CheckIfSettingsFileIsAssigned())
             {
                 return;
             }
-            CaptureKeyboardControls();
-            CaptureMouseControls();
 
-            ControlCameraPosition();
+            DampCameraMovement();
+            ControlCameraHeight();
+            UpdateCameraPosition();
         }
 
-        private void LateUpdate()
+        private void UpdateCameraPosition()
         {
-            CameraPivot.localPosition += _cameraVelocity;
-        }
+            if (_cameraTarget != null)
+            {
+                var transitionComplete = (Time.time - _transitionStartTime) / Settings.TransitionTime;
+                var origin = new Vector3(CameraPivot.transform.position.x,0, CameraPivot.transform.position.z);
+                var destination = new Vector3(_cameraTarget.transform.position.x, 0,
+                    _cameraTarget.transform.position.z);
 
+                var target = destination - origin;
+                CameraPivot.transform.localPosition = Vector3.Lerp(CameraPivot.transform.localPosition, CameraPivot.transform.localPosition + target, transitionComplete);
+                return;
+            }
+            _cameraVelocity = Vector3.ClampMagnitude(_cameraVelocity, Settings.CameraMovementData.MaxCameraSpeed);
+            CameraPivot.localPosition += _cameraVelocity;
+            _playerControlsCamera = false;
+        }
+        
+        private void CheckIfCameraTargetClicked()
+        {
+            if( Input.GetMouseButtonDown(0) )
+            {
+                var ray = _camera.ScreenPointToRay( Input.mousePosition );
+                RaycastHit hit;
+
+                if (!Physics.Raycast(ray, out hit, Mathf.Infinity)) return;
+
+                var target = hit.transform.GetComponent<RTSCameraTargetComponent>();
+                if (target != null)
+                {
+                    SwitchTarget(target.transform);
+                }
+            }
+        }
+        
+        private void CaptureKeyboardControls()
+        {
+            if (!Settings.EnableKeyboardMovement)
+            {
+                return;
+            }
+
+            var horizontalAxis = Input.GetAxis(Settings.KeyboardData.HorizontalPanAxisName);
+            var verticalAxis = Input.GetAxis(Settings.KeyboardData.VerticalPanAxisName);
+            
+            var localDirection = Vector3.zero;
+
+            localDirection += CameraPivot.forward * verticalAxis;
+            localDirection += CameraPivot.right * horizontalAxis;
+            
+            _cameraVelocity += localDirection * Settings.CameraMovementData.Acceleration;
+
+            if(localDirection.magnitude > 0)
+            { 
+                _playerControlsCamera = true;
+                _cameraTarget = null;
+            }
+        }
+        
         private void CaptureMouseControls()
         {
             if (!Settings.EnableMouseMovement)
@@ -98,39 +167,46 @@ namespace Plugins.O.M.A.Games.RTSCamera
                 if (mousePos.x <= Settings.MouseData.LeftScrollPadding)
                 {
                     xDelta = (int)Mathf.Abs(Settings.MouseData.LeftScrollPadding - mousePos.x);
-                    scrollVelocity.x -= Mathf.Pow(Settings.MouseData.Acceleration * 0.01f,2);
+                    scrollVelocity.x -= Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
                 }
                 else if (mousePos.x >= Screen.width - Settings.MouseData.RightScrollPadding)
                 {
                     xDelta = (int)Mathf.Abs(Screen.width - Settings.MouseData.RightScrollPadding - mousePos.x);
 
-                    scrollVelocity.x += Mathf.Pow(Settings.MouseData.Acceleration * 0.01f,2);
+                    scrollVelocity.x += Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
                 }
 
-            
                 if (mousePos.y <= Settings.MouseData.TopScrollPadding)
                 {
                     yDelta = (int)Mathf.Abs(Settings.MouseData.TopScrollPadding - mousePos.y);
-                    scrollVelocity.y -= Mathf.Pow(Settings.MouseData.Acceleration * 0.01f, 2);
+                    scrollVelocity.y -= Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
                 }
                 else if (mousePos.y >= Screen.height - Settings.MouseData.BottomScrollPadding)
                 {
                     yDelta = (int)Mathf.Abs(Screen.height - Settings.MouseData.BottomScrollPadding - mousePos.y);
-                    scrollVelocity.y += Mathf.Pow(Settings.MouseData.Acceleration * 0.01f,2);
+                    scrollVelocity.y += Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
                 }
                 scrollVelocity.x *= xDelta;
                 scrollVelocity.y *= yDelta;
             }
 
-            if (xDelta < 1 && yDelta < 1)
-            {
-                _cameraVelocity *= (1 - Settings.MouseData.Damping);
+            if(scrollVelocity.magnitude > 0)
+            { 
+                _playerControlsCamera = true;
+                _cameraTarget = null;
             }
-            scrollVelocity = Vector3.ClampMagnitude(scrollVelocity, Settings.MouseData.MaxCameraSpeed);
+
             _cameraVelocity += new Vector3(scrollVelocity.x, 0, scrollVelocity.y);
 
         }
-
+        private void DampCameraMovement()
+        {
+            if (_cameraVelocity.magnitude > 0f && !_playerControlsCamera)
+            {
+                _cameraVelocity *= (1 - Settings.CameraMovementData.Damping);
+            }
+        }
+        
         private void CaptureMouseRotation()
         {
             if (!Settings.EnableMouseRotation)
@@ -197,42 +273,7 @@ namespace Plugins.O.M.A.Games.RTSCamera
             _cameraVelocity += forceDirection * CameraLimitation.LimitationForce * Time.deltaTime;
         }
 
-        private bool CheckIfSettingsFileIsAssigned()
-        {
-            if (Settings != null) return true;
-
-            OMALog.Warning(string.Format(
-                "Settings not assigned. Please assign a settings file to " +
-                "control the camera. FloatingCameraComponent is assigned on : '{0}' GameObject",
-                gameObject.name));
-            return false;
-        }
-        private void CaptureKeyboardControls()
-        {
-            if (!Settings.EnableKeyboardMovement)
-            {
-                return;
-            }
-
-            var horizontalAxis = Input.GetAxis(Settings.KeyboardData.HorizontalPanAxisName);
-            var verticalAxis = Input.GetAxis(Settings.KeyboardData.VerticalPanAxisName);
-            
-            var localDirection = Vector3.zero;
-
-            localDirection += CameraPivot.forward * verticalAxis;
-            localDirection += CameraPivot.right * horizontalAxis;
-            
-            localDirection.Normalize();
-            _cameraVelocity += localDirection * Settings.KeyboardData.Acceleration;
-
-            if(Math.Abs(horizontalAxis) < 0.01f &&  verticalAxis < 0.01f)
-            {
-                _cameraVelocity *= (1 - Settings.KeyboardData.Damping);
-            }
-            _cameraVelocity = Vector3.ClampMagnitude(_cameraVelocity, Settings.KeyboardData.MaxCameraSpeed);
-            
-        }
-        private void ControlCameraPosition()
+        private void ControlCameraHeight()
         {
             if (!Settings.EnableSurfaceFloating)
             {
@@ -254,7 +295,17 @@ namespace Plugins.O.M.A.Games.RTSCamera
                     "Cannot find a Surface to float on. Check if the Surface Mask is correct and that the CameraRig is ABOVE the surface");
             }
             _camera.transform.localPosition = newCameraPosition;
+        }
+        
+        private bool CheckIfSettingsFileIsAssigned()
+        {
+            if (Settings != null) return true;
 
+            OMALog.Warning(string.Format(
+                "Settings not assigned. Please assign a settings file to " +
+                "control the camera. FloatingCameraComponent is assigned on : '{0}' GameObject",
+                gameObject.name));
+            return false;
         }
     }
 }

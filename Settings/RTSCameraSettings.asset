@@ -15,30 +15,40 @@ MonoBehaviour:
   InitialTransformData:
     InitialPosition: {x: 0, y: 0, z: 0}
     InitialRotation: {x: 40, y: 0}
+  TransitionTime: 5
   EnableSurfaceFloating: 1
   SurfaceData:
     SurfaceMask:
       serializedVersion: 2
-      m_Bits: 512
+      m_Bits: 16
     FloatingHeight: 20
+  CameraMovementData:
+    Acceleration: 1
+    Damping: 0.15
+    MaxCameraSpeed: 2
   EnableKeyboardMovement: 1
   KeyboardData:
-    Acceleration: 0.1
-    Damping: 0.1
-    MaxCameraSpeed: 1.8
-    ForwardKey: 119
-    RightKey: 100
-    BackKey: 115
-    LeftKey: 97
+    HorizontalPanAxisName: Horizontal
+    VerticalPanAxisName: Vertical
   EnableMouseMovement: 1
   MouseData:
-    Acceleration: 6.73
-    Damping: 0.001
-    MaxCameraSpeed: 10
-    TopScrollPadding: 80
+    TopScrollPadding: 100
     LeftScrollPadding: 100
-    BottomScrollPadding: 80
+    BottomScrollPadding: 100
     RightScrollPadding: 100
+  EnableCameraZoom: 1
+  CameraZoomData:
+    ZoomAxisName: Mouse ScrollWheel
+    ZoomSpeed: 50
+    MinFOV: 30
+    MaxFOV: 60
+    CameraPitchingCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ZoomTime: 1
   PivotOffset: 50
   EnableMouseRotation: 1
   RotationControlData:
