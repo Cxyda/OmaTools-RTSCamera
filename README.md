@@ -5,9 +5,10 @@ A strategy like camera rig for Unity3d
 
 ## Features:
 - Camera is 'floating' above a layerMask and always keeps the same distance (handy for terrains with hills etc.)
-- Camera translation can be controlled by the Keyboard
+- Camera translation can be controlled by the Keyboard and Mouse
 - Camera Rotation can be controled by the Mouse
 - Camera bounds can be specified where camera movement is allowed.
+- Camera can transition smoothly to target game objects
 - Easy to use and setup
 
 ## How to 'install'
@@ -35,7 +36,7 @@ to your dependencies.
 4) Tweak the settings of the RTSCameraSettings ScriptableObject
 
 ## Trouble Shooting
-- Make sure the *FloatingCameraRig* is **ABOVE** you terrain / object you want to float on. Otherwise the height recognizion will not work
+- Make sure the *RTSCameraRig* is **ABOVE** you terrain / object you want to float on. Otherwise the height recognizion will not work
 
 ## Known Issues
 - The height-recognition currently also captures trees etc. on terrains. This causes jumping of the camera.
