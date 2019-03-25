@@ -10,7 +10,7 @@
 		"type": "git",
 		"url": "git+https://github.com/Cxyda/OmaTools-RTSCamera.git"
 	},
-	"src": "Assets/Plugins/O.M.A.Games/RTS_Camera",
+	"src": "Assets/Plugins/O.M.A.Games/RTS-Camera",
 	"author": "cxyda <cxyda@polybeast.de> (https://github.com/Cxyda)",
 	"dependencies": {
 		"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git"
