@@ -28,6 +28,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Editor
             _cameraZoomData = serializedObject.FindProperty("CameraZoomData");
             _mouseRotationData = serializedObject.FindProperty("RotationControlData");
             
+            _movementData.isExpanded = true;
             _surfaceFloatingData.isExpanded = true;
             _keyboardData.isExpanded = true;
             _mouseData.isExpanded = true;
