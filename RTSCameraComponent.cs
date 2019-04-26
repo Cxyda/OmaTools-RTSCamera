@@ -1,9 +1,9 @@
 ﻿using Plugins.O.M.A.Games.Core.ErrorHandling;
-using Plugins.O.M.A.Games.RTS_Camera.Core;
+using Plugins.O.M.A.Games.RTSCamera.Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Plugins.O.M.A.Games.RTS_Camera
+namespace Plugins.O.M.A.Games.RTSCamera
 {
     /// <summary>
     /// The <see cref="RTSCameraComponent"/> is a Unity3D component to easily control a floating camera over a given
@@ -27,7 +27,8 @@ namespace Plugins.O.M.A.Games.RTS_Camera
 
         private Camera _camera;
         private Vector3 _cameraVelocity;
-        private float _cameraSpeed;
+        private Vector3 _cameraAcceleration;
+        //private float _cameraSpeed;
 
         private bool _playerControlsCamera;
 
@@ -66,8 +67,6 @@ namespace Plugins.O.M.A.Games.RTS_Camera
             CaptureMouseControls();
             CaptureCameraZoom();
             CaptureMouseRotation();
-
-            LimitCameraMovement();
         }
 
         private void LateUpdate()
@@ -77,8 +76,11 @@ namespace Plugins.O.M.A.Games.RTS_Camera
                 return;
             }
 
+
             DampCameraMovement();
             ControlCameraHeight();
+            
+            LimitCameraMovement();
             UpdateCameraPosition();
         }
 
@@ -95,9 +97,13 @@ namespace Plugins.O.M.A.Games.RTS_Camera
                 CameraPivot.transform.localPosition = Vector3.Lerp(CameraPivot.transform.localPosition, CameraPivot.transform.localPosition + target, transitionComplete);
                 return;
             }
+            _cameraVelocity += _cameraAcceleration;
+
             _cameraVelocity = Vector3.ClampMagnitude(_cameraVelocity, Settings.CameraMovementData.MaxCameraSpeed);
+            Debug.DrawRay(CameraPivot.position, _cameraVelocity, Color.green);
             CameraPivot.localPosition += _cameraVelocity;
             _playerControlsCamera = false;
+            _cameraAcceleration = Vector3.zero;
         }
         
         private void CheckIfCameraTargetClicked()
@@ -126,19 +132,19 @@ namespace Plugins.O.M.A.Games.RTS_Camera
 
             var horizontalAxis = Input.GetAxis(Settings.KeyboardData.HorizontalPanAxisName);
             var verticalAxis = Input.GetAxis(Settings.KeyboardData.VerticalPanAxisName);
-            
+            Debug.Log(horizontalAxis);
             var localDirection = Vector3.zero;
 
             localDirection += CameraPivot.forward * verticalAxis;
             localDirection += CameraPivot.right * horizontalAxis;
-            
-            _cameraVelocity += localDirection * Settings.CameraMovementData.Acceleration;
 
             if(localDirection.magnitude > 0)
             { 
                 _playerControlsCamera = true;
                 _cameraTarget = null;
             }
+
+            _cameraAcceleration += localDirection * Settings.CameraMovementData.Acceleration * Time.deltaTime;
         }
         
         private void CaptureMouseControls()
@@ -149,7 +155,7 @@ namespace Plugins.O.M.A.Games.RTS_Camera
             }
 
             Vector2 mousePos = Input.mousePosition;
-            var scrollVelocity = Vector2.zero;
+            var scrollAcceleration = Vector2.zero;
             var view = _camera.ScreenToViewportPoint(mousePos);
 
             var isPointerOverUi = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
@@ -159,49 +165,52 @@ namespace Plugins.O.M.A.Games.RTS_Camera
             {
                 return;
             }
-            var xDelta = 0;
-            var yDelta = 0;
+            var xAcceleration = 0f;
+            var yAcceleration = 0f;
 
             if (!isPointerOverUi)
             {
                 if (mousePos.x <= Settings.MouseData.LeftScrollPadding)
                 {
-                    xDelta = (int)Mathf.Abs(Settings.MouseData.LeftScrollPadding - mousePos.x);
-                    scrollVelocity.x -= Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
+                    xAcceleration = Mathf.Abs(Settings.MouseData.LeftScrollPadding - mousePos.x) / Settings.MouseData.LeftScrollPadding;
+                    scrollAcceleration.x -= Settings.CameraMovementData.Acceleration;
                 }
                 else if (mousePos.x >= Screen.width - Settings.MouseData.RightScrollPadding)
                 {
-                    xDelta = (int)Mathf.Abs(Screen.width - Settings.MouseData.RightScrollPadding - mousePos.x);
+                    xAcceleration = Mathf.Abs(Screen.width - Settings.MouseData.RightScrollPadding - mousePos.x) / Settings.MouseData.RightScrollPadding;
 
-                    scrollVelocity.x += Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
+                    scrollAcceleration.x += Settings.CameraMovementData.Acceleration;
                 }
 
                 if (mousePos.y <= Settings.MouseData.TopScrollPadding)
                 {
-                    yDelta = (int)Mathf.Abs(Settings.MouseData.TopScrollPadding - mousePos.y);
-                    scrollVelocity.y -= Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
+                    yAcceleration = Mathf.Abs(Settings.MouseData.TopScrollPadding - mousePos.y) / Settings.MouseData.TopScrollPadding;
+                    scrollAcceleration.y -= Settings.CameraMovementData.Acceleration;
                 }
                 else if (mousePos.y >= Screen.height - Settings.MouseData.BottomScrollPadding)
                 {
-                    yDelta = (int)Mathf.Abs(Screen.height - Settings.MouseData.BottomScrollPadding - mousePos.y);
-                    scrollVelocity.y += Settings.CameraMovementData.Acceleration * Time.deltaTime * 0.1f;
+                    yAcceleration = Mathf.Abs(Screen.height - Settings.MouseData.BottomScrollPadding - mousePos.y) / Settings.MouseData.BottomScrollPadding;
+                    scrollAcceleration.y += Settings.CameraMovementData.Acceleration;
                 }
-                scrollVelocity.x *= xDelta;
-                scrollVelocity.y *= yDelta;
+                scrollAcceleration.x *= Mathf.Clamp01(xAcceleration);
+                scrollAcceleration.y *= Mathf.Clamp01(yAcceleration);
             }
 
-            if(scrollVelocity.magnitude > 0)
+            if(scrollAcceleration.magnitude > 0)
             { 
                 _playerControlsCamera = true;
                 _cameraTarget = null;
             }
 
-            _cameraVelocity += new Vector3(scrollVelocity.x, 0, scrollVelocity.y);
+            _cameraAcceleration += new Vector3(scrollAcceleration.x, 0, scrollAcceleration.y)  * Time.deltaTime;
 
         }
         private void DampCameraMovement()
         {
-            if (_cameraVelocity.magnitude > 0f && !_playerControlsCamera)
+            var insideBounds = CameraLimitation.CameraAreaCollider == null ||
+                               CameraLimitation.CameraAreaCollider.bounds.Contains(CameraPivot.position);
+
+            if (_cameraVelocity.magnitude > 0f && !_playerControlsCamera && insideBounds)
             {
                 _cameraVelocity *= (1 - Settings.CameraMovementData.Damping);
             }
@@ -264,13 +273,21 @@ namespace Plugins.O.M.A.Games.RTS_Camera
             {
                 return;
             }
-
+            
             var closestPointOnBounds =
                 CameraLimitation.CameraAreaCollider.ClosestPointOnBounds(CameraPivot.position);
             var forceDirection = closestPointOnBounds - CameraPivot.position;
-            
-            Debug.DrawRay(CameraPivot.position, forceDirection, Color.magenta);
-            _cameraVelocity += forceDirection * CameraLimitation.LimitationForce * Time.deltaTime;
+
+            _cameraAcceleration = Vector3.zero;
+            if (_cameraVelocity.magnitude > 0f && _playerControlsCamera)
+            {
+                _cameraVelocity *= (1 - Mathf.Pow(CameraLimitation.PushbackStrength, 4));
+            }
+            else
+            {
+                _cameraAcceleration += forceDirection;
+            }
+
         }
 
         private void ControlCameraHeight()

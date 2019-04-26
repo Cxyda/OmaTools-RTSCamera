@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Plugins.O.M.A.Games.RTS_Camera.Core
+namespace Plugins.O.M.A.Games.RTSCamera.Core
 {
     /// <summary>
     /// This class provides all customizable properties for the floating feature <see cref="RTSCameraComponent"/>

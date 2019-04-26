@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Plugins.O.M.A.Games.RTS_Camera.Core
+namespace Plugins.O.M.A.Games.RTSCamera.Core
 {
     /// <summary>
     /// This class provides all settings of the <see cref="RTSCameraComponent"/>
@@ -42,7 +42,7 @@ namespace Plugins.O.M.A.Games.RTS_Camera.Core
             InitialTransformData.InitialRotation = new Vector3(40,0,0);
             SurfaceData.FloatingHeight = 20;
 
-            CameraMovementData.Acceleration = 1f;
+            CameraMovementData.Acceleration = 5f;
             CameraMovementData.Damping = 0.15f;
             CameraMovementData.MaxCameraSpeed = 2f;
             
