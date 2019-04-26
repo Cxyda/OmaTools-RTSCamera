@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Plugins.O.M.A.Games.RTS_Camera.Core
+namespace Plugins.O.M.A.Games.RTSCamera.Core
 {
     /// <summary>
     /// This class provides general movement data for the <see cref="RTSCameraComponent"/>
@@ -9,7 +9,7 @@ namespace Plugins.O.M.A.Games.RTS_Camera.Core
     [Serializable]
     public struct CameraMovementData
     {
-        [Range(0.1f, 10f)]
+        [Range(0.1f, 20f)]
         [Tooltip("The camera acceleration after a move command was received")]
         public float Acceleration;
         [Range(0.01f, 1f)]
