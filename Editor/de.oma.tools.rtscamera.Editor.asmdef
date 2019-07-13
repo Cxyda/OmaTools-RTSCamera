@@ -1,0 +1,16 @@
+{
+    "name": "de.oma.tools.rtscamera.Editor",
+    "references": [
+        "GUID:4bed291109e9a499bb8f50a76078b0b8",
+        "GUID:27a761b311cc341dcb1bbcfe2fd86800"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

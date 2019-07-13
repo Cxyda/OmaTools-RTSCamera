@@ -1,0 +1,15 @@
+{
+    "name": "de.oma.tools.rtscamera",
+    "references": [
+        "GUID:4bed291109e9a499bb8f50a76078b0b8"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
