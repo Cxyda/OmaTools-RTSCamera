@@ -5,17 +5,25 @@ A strategy like camera rig for Unity3d
 
 ## Features:
 - Camera is 'floating' above a layerMask and always keeps the same distance (handy for terrains with hills etc.)
-- Camera translation can be controlled by the Keyboard and Mouse
-- Camera Rotation can be controled by the Mouse
+- Camera translation can be controlled by the Keyboard and Mouse (new and old input system supported)
+  - Moving the camera by moving the mouse to the screen edges is supported as well
+- Camera Rotation can be controlled by the Keyboard and Mouse (new and old input system supported)
 - Camera bounds can be specified where camera movement is allowed.
-- Camera can transition smoothly to target game objects
+- Camera can follow a target (e.g. a player or any other gameObject)
 - Easy to use and setup
+- Lots of settings to customize the camera to your needs
 
 ## How to 'install'
-*Using Unity's package manager (Unity3D 2018.3+)*
-1) Open the **manifest.json** file in you ./packages/ folder in your unity project
+*Using Unity's package manager (Unity3D 2021.3+)*
+1) Open the package manager in Unity
+2) Click the "+" Button at the upper left corner and select "Add package from git URL..."
+3) Enter the URL: "https://github.com/Cxyda/OmaTools-RTSCamera.git"
+
+OR
+
+1) Open the **manifest.json** file in your ./packages/ folder in your unity project
 2) add 
-> **"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git",** 
+> **"de.oma.tools.rtscamera": "https://github.com/Cxyda/OmaTools-RTSCamera.git",** 
 
 to your dependencies.
   > NOTE: don't forget to add the comma ',' at the end of the line OR at the line above the line you added
