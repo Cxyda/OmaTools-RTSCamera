@@ -3,6 +3,7 @@
 namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 {
     [ExecuteAlways]
+    [RequireComponent(typeof(Collider))]
     public class RTSCameraBoundsVolume : MonoBehaviour
     {
         [SerializeField] private Collider _boundsCollider;

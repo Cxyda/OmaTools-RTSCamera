@@ -1,8 +1,8 @@
-using Plugins.O.M.A.Games.Core;
+using Plugins.O.M.A.Games.RTSCamera.Runtime.Core;
 using UnityEditor;
 using UnityEngine;
 
-namespace Plugins.O.M.A.Games.RTSCamera
+namespace Plugins.O.M.A.Games.RTSCamera.Runtime
 {
     /// <summary>
     /// This class is responsible for creating the RTSCameraRig
@@ -10,45 +10,70 @@ namespace Plugins.O.M.A.Games.RTSCamera
     public static class RTSCameraCreator
     {
 #if UNITY_EDITOR
-        private static readonly Vector3 InitialSpawnPosition = new Vector3(0,50,0);
-        private static readonly Vector3 InitialBoundingBox = new Vector3(100,50,100);
-        
         [MenuItem("O.M.A.Tools/Cameras/Create RTSCamera")]
-        public static void CreateFloatingCameraRig()
+        [MenuItem("GameObject/O.M.A.Tools/Camera/Create RTSCamera", priority = -201)]
+        public static void CreateRTSCameraRig()
         {
-            /* TODO
+            var settings = LoadOrCreateSettings();
+
             var cameraRig = new GameObject("RTSCameraRig");
+            var rtsCameraInputComponent = cameraRig.AddComponent<RTSCameraInputComponent>();
+            var rtsCameraComponent = cameraRig.AddComponent<RTSCameraComponent>();
 
-            var floatingCamera = new GameObject("RTSCamera", typeof(RTSCameraComponent));
-            var cameraPivot = new GameObject("CameraPivot");
-            
-            var cameraBounds = new GameObject("CameraBounds", typeof(BoxCollider));
-            var camera = new GameObject("Camera", typeof(Camera));
+            rtsCameraComponent.CameraSettings = settings;
+            cameraRig.transform.localRotation = Quaternion.Euler(new Vector3(0, 45, 0));
 
-            cameraPivot.transform.SetParent(floatingCamera.transform, true);
-            
-            floatingCamera.transform.SetParent(cameraRig.transform, true);
-            cameraBounds.transform.SetParent(cameraRig.transform, true);
-            
-            camera.transform.SetParent(cameraPivot.transform, true);
+            var cameraTarget = new GameObject("CameraTarget");
+            cameraTarget.transform.SetParent(cameraRig.transform, true);
+            cameraTarget.transform.localPosition = new Vector3(0, 0, 0);
+            cameraTarget.transform.localRotation = Quaternion.Euler(new Vector3(60, 0, 0));
 
-            camera.tag = "MainCamera";
+            cameraTarget.tag = settings.CameraTargetTagName;
+            var cameraObject = new GameObject("Camera", typeof(Camera));
 
-            cameraRig.transform.localPosition = InitialSpawnPosition;
+            cameraObject.transform.SetParent(cameraTarget.transform, true);
+            cameraObject.transform.localPosition = new Vector3(0, 0, -25);
+            cameraObject.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
 
-            var floatingCameraComp = floatingCamera.GetComponent<RTSCameraComponent>();
-            var cameraBoundsCollider = cameraBounds.GetComponent<BoxCollider>();
+        [MenuItem("O.M.A.Tools/Cameras/Create RTSCamera Settings")]
+        public static void CreateRTSCameraSettings()
+        {
+            var settings = ScriptableObject.CreateInstance<RtsCameraSettings>();
+            AssetDatabase.CreateAsset(settings, "Assets/Resources/RTSCameraSettings.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            EditorGUIUtility.PingObject(settings);
+        }
 
-            floatingCameraComp.CameraPivot = cameraPivot.transform;
-            floatingCameraComp.Settings = OMAUtils.GetFloatingCameraSettings<RTSCameraSettings>();
+        [MenuItem("GameObject/O.M.A.Tools/Camera/Create Camera Bounds", priority = -200)]
+        public static void CreateRTSCameraBounds()
+        {
+            var cameraBoundsObject = new GameObject("CameraBounds", typeof(BoxCollider))
+                {
+                    transform =
+                    {
+                        localScale = new Vector3(50, 20, 50)
+                    }
+                };
+            var rtsCameraBoundsVolume = cameraBoundsObject.AddComponent<RTSCameraBoundsVolume>();
+            var rtsCameraComponent = Object.FindObjectOfType<RTSCameraComponent>();
+            if (rtsCameraComponent != null)
+            {
+                rtsCameraComponent.BoundsVolume = rtsCameraBoundsVolume;
+            }
+        }
+        private static RtsCameraSettings LoadOrCreateSettings()
+        {
+            var settingsArray = Resources.LoadAll<RtsCameraSettings>("Settings");
+            if (settingsArray != null && settingsArray.Length > 0) return settingsArray[0];
 
-            floatingCameraComp.CameraLimitation.CameraAreaCollider = cameraBoundsCollider;
-            cameraBoundsCollider.size = InitialBoundingBox;
+            var settings = ScriptableObject.CreateInstance<RtsCameraSettings>();
+            AssetDatabase.CreateAsset(settings, "Assets/Resources/RTSCameraSettings.asset");
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
-            camera.transform.localPosition = floatingCameraComp.Settings.InitialTransformData.InitialPosition;
-            camera.transform.localRotation = Quaternion.Euler(floatingCameraComp.Settings.InitialTransformData.InitialRotation);
-            
-            */
+            return settings;
         }
 #endif
     }

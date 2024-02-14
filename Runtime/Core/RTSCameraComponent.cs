@@ -65,6 +65,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
+        public RTSCameraBoundsVolume BoundsVolume
+        {
+            get => _cameraBounds;
+            set => _cameraBounds = value;
+        }
+
         private void Awake()
         {
             InputComponent.CameraSettings = _settings;
