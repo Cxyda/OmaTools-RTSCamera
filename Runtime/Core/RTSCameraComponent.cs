@@ -11,9 +11,6 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
         [SerializeField] private RtsCameraSettings _settings;
 
         [SerializeField] private RTSCameraBoundsVolume _cameraBounds;
-        [Range(1f, 100f)]
-        [SerializeField] private float _boundsPushbackForce = 10f;
-
         [SerializeField] private bool _drawDebugGizmos;
 
         [Header("Camera Follow")]
@@ -233,7 +230,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             else
             {
                 var closestPoint = _cameraBounds.GetClosestPointOnBounds(smoothedTargetPosition);
-                var pushbackVector = (closestPoint - smoothedTargetPosition) * _boundsPushbackForce * 0.1f;
+                var pushbackVector = (closestPoint - smoothedTargetPosition) * _settings.BoundsPushbackForce * 0.1f;
                 smoothedTargetPosition = Vector3.SmoothDamp(localPosition, smoothedTargetPosition + pushbackVector,
                     ref _movementVelocity, 1f / _settings.MovementAcceleration, _settings.MaxMovementSpeed);
                 transform.localPosition = smoothedTargetPosition;

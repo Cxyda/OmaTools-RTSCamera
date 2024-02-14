@@ -31,6 +31,7 @@ MonoBehaviour:
     m_Bits: 64
   TerrainFollowSpeed: 5
   TerrainRaycastDistance: 10000
+  BoundsPushbackForce: 8
   CameraTargetTagName: CameraTarget
   AllowScreenScroll: 1
   TopScrollArea: 0.85

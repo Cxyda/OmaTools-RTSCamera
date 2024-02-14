@@ -48,6 +48,9 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
         public float TerrainFollowSpeed = 5f;
         [Tooltip("The distance at which the camera raycasts the terrain.")]
         public float TerrainRaycastDistance = 10000f;
+        [Range(1f, 100f)]
+        [Tooltip("The force at which the camera is pushed back when it is outside the bounds.")]
+        public float BoundsPushbackForce = 8f;
 
         [Header("Camera System Settings")]
         [Tooltip("The tag of the camera target.")]
