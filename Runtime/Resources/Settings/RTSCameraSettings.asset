@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7472fc8aa84b148e157efb6846b9e5, type: 3}
+  m_Name: RTSCameraSettings
+  m_EditorClassIdentifier: 
+  MaxMovementSpeed: 15
+  MovementAcceleration: 2.5
+  ZoomStepSize: 5
+  ZoomSpeed: 10
+  MinZoomDistance: 10
+  MaxZoomDistance: 50
+  LookTurnSpeed: 2
+  LookTurnSpeedDamping: 0.05
+  StepTurnAngle: 45
+  StepTurnSpeed: 10
+  MinPitchAngle: 20
+  MaxPitchAngle: 90
+  RotationSnapAngle: 0.5
+  NextTurnStepAngleThreshold: 10
+  TerrainLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  TerrainFollowSpeed: 5
+  TerrainRaycastDistance: 10000
+  CameraTargetTagName: CameraTarget
+  AllowScreenScroll: 1
+  TopScrollArea: 0.85
+  BottomScrollArea: 0.15
+  LeftScrollArea: 0.1
+  RightScrollArea: 0.9

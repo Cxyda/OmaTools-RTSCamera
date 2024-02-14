@@ -1,35 +1,14 @@
-﻿using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
+﻿using System;
+using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
 using UnityEngine;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 {
-    public class RTSCameraMovementComponent : MonoBehaviour
+    [RequireComponent(typeof(RTSCameraInputComponent))]
+    public class RTSCameraComponent : MonoBehaviour
     {
-        [Header("Input Component")]
-        [SerializeField] private RTSCameraInputComponent _inputComponent;
-
-        [Header("Movement")]
-        [SerializeField] private float _maxMovementSpeed = 5.0f;
-        [Range(0.1f, 10f)]
-        [SerializeField] private float _movementAcceleration = 2.5f;
-
-        [Header("Zoom")]
-        [SerializeField]private float _zoomStepSize = 5f;
-        [SerializeField] private float _zoomSpeed = 10.0f;
-        [SerializeField] private float _minZoomDistance = 50.0f;
-        [SerializeField] private float _maxZoomDistance = 500.0f;
-
-        [Header("Look")]
-        [SerializeField] private float _lookTurnSpeed = 2.0f;
-        [SerializeField] private float _lookTurnSpeedDamping = 0.05f;
-        [SerializeField] private float _stepTurnAngle = 45.0f;
-        [SerializeField] private float _stepTurnSpeed = 5.0f;
-        [SerializeField] private float _minPitchAngle = 20f;
-        [SerializeField] private float _maxPitchAngle = 90f;
-
-        [Header("Optional Settings")]
-        [SerializeField] private LayerMask _terrainLayer;
-        [SerializeField] private float _terrainFollowSpeed = 5f;
+        [Header("Components")]
+        [SerializeField] private RtsCameraSettings _settings;
 
         [SerializeField] private RTSCameraBoundsVolume _cameraBounds;
         [Range(1f, 100f)]
@@ -54,6 +33,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 
         [SerializeField, HideInInspector] private Camera _camera;
         [SerializeField, HideInInspector] private Transform _cameraFocusTarget;
+        [SerializeField, HideInInspector] private RTSCameraInputComponent _inputComponent;
 
         // Initial values stored to eventually reset them later
         private Quaternion _initialRotation;
@@ -63,13 +43,36 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
         private float _targetYawAngle;
         private float _targetPitchAngle;
 
+        public RtsCameraSettings CameraSettings
+        {
+            get => _settings;
+            set
+            {
+                _settings = value;
+                InputComponent.CameraSettings = value;
+            }
+        }
+
+        protected RTSCameraInputComponent InputComponent
+        {
+            get
+            {
+                if(_inputComponent == null)
+                {
+                    _inputComponent = GetComponent<RTSCameraInputComponent>();
+                }
+                return _inputComponent;
+            }
+        }
+
         private void Awake()
         {
-            _inputComponent.OnCameraMoveActionEvent += OnMove;
-            _inputComponent.OnFreeRotationActionEvent += OnFreeRotate;
-            _inputComponent.OnCameraZoomActionEvent += OnZoom;
-            _inputComponent.OnStepRotationActionEvent += OnStepRotate;
-            _inputComponent.OnRestoreInitialRotationActionEvent += OnInitialRotationRestored;
+            InputComponent.CameraSettings = _settings;
+            InputComponent.OnCameraMoveActionEvent += OnMove;
+            InputComponent.OnFreeRotationActionEvent += OnFreeRotate;
+            InputComponent.OnCameraZoomActionEvent += OnZoom;
+            InputComponent.OnStepRotationActionEvent += OnStepRotate;
+            InputComponent.OnRestoreInitialRotationActionEvent += OnInitialRotationRestored;
 
             if (!_camera)
             {
@@ -78,7 +81,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 
             if (!_cameraFocusTarget)
             {
-                _cameraFocusTarget = transform.FindChildWithTag(RTSCamera_GlobalSettings.CameraTargetTagName);
+                _cameraFocusTarget = transform.FindChildWithTag(_settings.CameraTargetTagName);
             }
             _targetZoomDistance = Mathf.Abs(_camera.transform.localPosition.z);
 
@@ -91,12 +94,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 
         private void OnEnable()
         {
-            _inputComponent.Enable(true);
+            InputComponent.Enable(true);
         }
 
         private void OnDisable()
         {
-            _inputComponent.Enable(false);
+            InputComponent.Enable(false);
         }
 
         public void SetCameraFollowTarget(GameObject objectToFollow)
@@ -115,7 +118,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             UpdateTerrainPosition();
 
             _worldTransformDirection = Vector3.zero;
-            _freeLookRotation *= 1 - _lookTurnSpeedDamping;
+            _freeLookRotation *= 1 - _settings.LookTurnSpeedDamping;
         }
 
         private void FollowCameraTarget()
@@ -154,12 +157,14 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             var cameraTargetPosition = _cameraFocusTarget.transform.position;
             var startPoint = cameraTargetPosition + Vector3.up * (distance * 0.5f);
 
-            if (Physics.Raycast(startPoint, Vector3.down, out var raycastHit,RTSCamera_GlobalSettings.RaycastDistance,  _terrainLayer,
-                    QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(startPoint, Vector3.down, out var raycastHit, _settings.TerrainRaycastDistance,
+                    _settings.TerrainLayer, QueryTriggerInteraction.Ignore))
             {
                 var parentTransform = transform;
                 var parentPosition = parentTransform.position;
-                parentTransform.position = Vector3.Lerp(parentPosition, new Vector3(parentPosition.x, raycastHit.point.y, parentPosition.z), _terrainFollowSpeed * Time.deltaTime);
+                parentTransform.position = Vector3.Lerp(parentPosition,
+                    new Vector3(parentPosition.x, raycastHit.point.y, parentPosition.z),
+                    _settings.TerrainFollowSpeed * Time.deltaTime);
             }
         }
 
@@ -171,10 +176,10 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 
             var targetRotation =
                 Quaternion.Euler(rotation.eulerAngles.x, _targetStepRotationAngle, rotation.eulerAngles.z);
-            transform.rotation = Quaternion.Lerp(rotation,targetRotation, _stepTurnSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(rotation,targetRotation, _settings.StepTurnSpeed * Time.deltaTime);
             var angle = Quaternion.Angle(rotation, targetRotation);
 
-            if (angle <= RTSCamera_GlobalSettings.RotationSnapAngle)
+            if (angle <= _settings.RotationSnapAngle)
             {
                 transform.rotation = targetRotation;
                 _targetYawAngle = targetRotation.eulerAngles.y;
@@ -189,22 +194,22 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             // Parent object rotation (yaw)
             var rotation = transform.rotation;
             var targetRotation = Quaternion.Euler(rotation.eulerAngles.x, _targetYawAngle, rotation.eulerAngles.z);
-            transform.rotation = Quaternion.Lerp(rotation, targetRotation, _lookTurnSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(rotation, targetRotation, _settings.LookTurnSpeed * Time.deltaTime);
 
             // camera rotation (pitch)
             var cameraTargetRotation = _cameraFocusTarget.transform.rotation;
-            _targetPitchAngle = Mathf.Clamp(_targetPitchAngle, _minPitchAngle, _maxPitchAngle);
+            _targetPitchAngle = Mathf.Clamp(_targetPitchAngle, _settings.MinPitchAngle, _settings.MaxPitchAngle);
             var targetCameraRotation = Quaternion.Euler(_targetPitchAngle, cameraTargetRotation.eulerAngles.y, cameraTargetRotation.eulerAngles.z);
 
-            _cameraFocusTarget.transform.rotation =  Quaternion.Lerp(cameraTargetRotation, targetCameraRotation, _lookTurnSpeed * Time.deltaTime);
+            _cameraFocusTarget.transform.rotation =  Quaternion.Lerp(cameraTargetRotation, targetCameraRotation, _settings.LookTurnSpeed * Time.deltaTime);
         }
 
         private void UpdateCameraZoom()
         {
             var cameraLocalPosition = _camera.transform.localPosition;
-            _targetZoomDistance = Mathf.Clamp(_targetZoomDistance, _minZoomDistance, _maxZoomDistance);
+            _targetZoomDistance = Mathf.Clamp(_targetZoomDistance, _settings.MinZoomDistance, _settings.MaxZoomDistance);
             _camera.transform.localPosition = Vector3.Lerp(cameraLocalPosition, new Vector3(cameraLocalPosition.x, cameraLocalPosition.y, -_targetZoomDistance),
-                _zoomSpeed * Time.deltaTime);
+                _settings.ZoomSpeed * Time.deltaTime);
         }
 
         private void UpdateCameraPosition()
@@ -213,7 +218,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             var targetPosition = localPosition + _worldTransformDirection;
             
             var smoothedTargetPosition = Vector3.SmoothDamp(localPosition, targetPosition,
-                ref _movementVelocity, 1f / _movementAcceleration, _maxMovementSpeed);
+                ref _movementVelocity, 1f / _settings.MovementAcceleration, _settings.MaxMovementSpeed);
 
             if (!_cameraBounds || _cameraBounds.IsTargetWithinBounds(smoothedTargetPosition))
             {
@@ -224,7 +229,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
                 var closestPoint = _cameraBounds.GetClosestPointOnBounds(smoothedTargetPosition);
                 var pushbackVector = (closestPoint - smoothedTargetPosition) * _boundsPushbackForce * 0.1f;
                 smoothedTargetPosition = Vector3.SmoothDamp(localPosition, smoothedTargetPosition + pushbackVector,
-                    ref _movementVelocity, 1f / _movementAcceleration, _maxMovementSpeed);
+                    ref _movementVelocity, 1f / _settings.MovementAcceleration, _settings.MaxMovementSpeed);
                 transform.localPosition = smoothedTargetPosition;
             }
         }
@@ -241,12 +246,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             if(_cameraFollowTarget) return;
 
             _worldTransformDirection = transform.TransformDirection(new Vector3(-inputValue.x, 0, inputValue.y)) *
-                                          _maxMovementSpeed;
+                                       _settings.MaxMovementSpeed;
         }
 
         private void OnZoom(float zoomDirection)
         {
-            _targetZoomDistance += zoomDirection * _zoomStepSize;
+            _targetZoomDistance += zoomDirection * _settings.ZoomStepSize;
         }
         
         private void OnInitialRotationRestored()
@@ -256,12 +261,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 
         private void OnStepRotate(float stepDirection)
         {
-            var closestStepIndex = Mathf.RoundToInt(transform.rotation.eulerAngles.y / _stepTurnAngle);
+            var closestStepIndex = Mathf.RoundToInt(transform.rotation.eulerAngles.y / _settings.StepTurnAngle);
 
             // if angle <= 10° advance to the next step
-            if ( Mathf.Abs(transform.rotation.eulerAngles.y - closestStepIndex * _stepTurnAngle) <= RTSCamera_GlobalSettings.NextTurnStepAngleThreshold)
+            if ( Mathf.Abs(transform.rotation.eulerAngles.y - closestStepIndex * _settings.StepTurnAngle) <= _settings.NextTurnStepAngleThreshold)
             {
-                _targetStepRotationAngle = (closestStepIndex + stepDirection) * _stepTurnAngle;
+                _targetStepRotationAngle = (closestStepIndex + stepDirection) * _settings.StepTurnAngle;
             }
 
             _isStepRotationInProgress = true;

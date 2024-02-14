@@ -13,6 +13,8 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
         public event Action<float> OnStepRotationActionEvent;
         public event Action OnRestoreInitialRotationActionEvent;
 
+        [SerializeField] private RtsCameraSettings _settings;
+
         [FormerlySerializedAs("MoveCameraForwardKey")]
         [Header("Old Input System Settings")]
         [SerializeField] private KeyCode _moveCameraForwardKey = KeyCode.W;
@@ -48,6 +50,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
         
         private Vector2 _lastMouseCursorPosition;
         private bool _isInputEnabled;
+
+        public RtsCameraSettings CameraSettings
+        {
+            get => _settings; 
+            set => _settings = value;
+        }
 
         private void Awake()
         {
@@ -120,6 +128,30 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
                 {
                     float direction = Input.GetKeyDown(_stepRotateCameraLeftKey) ? 1 : -1;
                     OnStepRotationActionEvent?.Invoke(direction);
+                }
+            }
+
+            if (_settings.AllowScreenScroll)
+            {
+                var cursorPosition = Input.mousePosition;
+                var screenWidth = Screen.width;
+                var screenHeight = Screen.height;
+                if(cursorPosition.x < screenWidth * _settings.LeftScrollArea)
+                {
+                    OnCameraMoveActionEvent?.Invoke(new Vector2(1, 0));
+                }
+                else if(cursorPosition.x > screenWidth * _settings.RightScrollArea)
+                {
+                    OnCameraMoveActionEvent?.Invoke(new Vector2(-1, 0));
+                }
+                
+                if(cursorPosition.y < screenHeight * _settings.BottomScrollArea)
+                {
+                    OnCameraMoveActionEvent?.Invoke(new Vector2(0, -1));
+                }
+                else if(cursorPosition.y > screenHeight * _settings.TopScrollArea)
+                {
+                    OnCameraMoveActionEvent?.Invoke(new Vector2(0, 1));
                 }
             }
         }
