@@ -1,5 +1,4 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
 {

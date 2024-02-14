@@ -29,25 +29,19 @@ to your dependencies.
   > NOTE: don't forget to add the comma ',' at the end of the line OR at the line above the line you added
 3) Go back to Unity and your Packages should be updated.
 
-*Using Unity 2018.2.X and below*
-1) Clone / Copy this repsitory to your **./Assets/Plugins/O.M.A.Games/RTS Camera/** Folder
-2) You do also need the O.M.A.Tools Core package: https://github.com/Cxyda/OmaTools-Core
 
 ## How To Setup
-2) In Unity Select *O.M.A.Tools > Cameras > Create RTSCamera* from Unity's tools menu
-3) The *RTSCameraRig* GameObject will be spawned in the Inspector.
+1) In Unity Select *O.M.A.Tools > Cameras > Create RTSCamera* from Unity's tools menu
+2) The *RTSCameraRig* GameObject will be spawned in the Scene.
 
 ## How To Customize
-1) The settings file is located at **/Assets/Plugins/O.M.A.Games/RTSCamera/Settings**
+1) The default settings file is located at **/Packages/OMA-Tools RTS Camera/Runtime/Resources/Settings**
 2) Enable the features you like
 3) Hit the Play! button
 4) Tweak the settings of the RTSCameraSettings ScriptableObject
 
-## Trouble Shooting
-- Make sure the *RTSCameraRig* is **ABOVE** you terrain / object you want to float on. Otherwise the height recognizion will not work
-
 ## Known Issues
-- The height-recognition currently also captures trees etc. on terrains. This causes jumping of the camera.
+- No issues known
 
 I hope you like this small camera system. Have fun with it.
 

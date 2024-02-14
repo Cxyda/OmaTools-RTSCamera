@@ -1,5 +1,4 @@
-﻿using System;
-using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
+﻿using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
 using UnityEngine;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
