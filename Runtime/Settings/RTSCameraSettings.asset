@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6de1615f013042f4af94b230571b6dee, type: 3}
+  m_Name: RTSCameraSettings
+  m_EditorClassIdentifier: 
+  InitialTransformData:
+    InitialPosition: {x: 0, y: 0, z: 0}
+    InitialRotation: {x: 40, y: 0}
+  TransitionTime: 5
+  EnableSurfaceFloating: 1
+  SurfaceData:
+    SurfaceMask:
+      serializedVersion: 2
+      m_Bits: 16
+    FloatingHeight: 20
+  CameraMovementData:
+    Acceleration: 1
+    Damping: 0.15
+    MaxCameraSpeed: 2
+  EnableKeyboardMovement: 1
+  KeyboardData:
+    HorizontalPanAxisName: Horizontal
+    VerticalPanAxisName: Vertical
+  EnableMouseMovement: 1
+  MouseData:
+    TopScrollPadding: 100
+    LeftScrollPadding: 100
+    BottomScrollPadding: 100
+    RightScrollPadding: 100
+  EnableCameraZoom: 1
+  CameraZoomData:
+    ZoomAxisName: Mouse ScrollWheel
+    ZoomSpeed: 50
+    MinFOV: 30
+    MaxFOV: 60
+    CameraPitchingCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    ZoomTime: 1
+  PivotOffset: 50
+  EnableMouseRotation: 1
+  RotationControlData:
+    RotationTrigger: 1
+    RotationSensitivity: 0.2
+    InvertRotationAxis: 0

@@ -1,0 +1,18 @@
+
+{
+	"name": "de.oma.tools.rtscamera",
+	"displayName": "OMA-Tools RTS Camera",
+	"description": "This package provides a basic RTS-like camera.",
+	"version": "0.2.0",
+	"unity": "2018.3",
+	"license": "GPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Cxyda/OmaTools-RTSCamera.git"
+	},
+	"src": "Assets/Plugins/O.M.A.Games/RTS-Camera",
+	"author": "cxyda <cxyda@polybeast.de> (https://github.com/Cxyda)",
+	"dependencies": {
+		"de.oma.tools.core": "https://github.com/Cxyda/OmaTools-Core.git"
+	}
+}
