@@ -67,7 +67,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             set => _cameraBounds = value;
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             InputComponent.CameraSettings = _settings;
             InputComponent.OnCameraMoveActionEvent += OnMove;
@@ -94,12 +94,12 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             RestoreInitialRotationAndZoom();
         }
 
-        private void OnEnable()
+        protected virtual void OnEnable()
         {
             InputComponent.Enable(true);
         }
 
-        private void OnDisable()
+        protected virtual void OnDisable()
         {
             InputComponent.Enable(false);
         }
@@ -109,7 +109,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _cameraFollowTarget = objectToFollow;
         }
 
-        private void LateUpdate()
+        protected virtual void LateUpdate()
         {
             UpdateCameraPosition();
             UpdateCameraZoom();
@@ -123,7 +123,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _freeLookRotation *= 1 - _settings.LookTurnSpeedDamping;
         }
 
-        private void FollowCameraTarget()
+        protected virtual void FollowCameraTarget()
         {
             if(!_cameraFollowTarget) return;
             var targetPosition = _cameraFollowTarget.transform.position;
@@ -153,7 +153,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             Gizmos.color = gizmoColor;
         }
 
-        private void UpdateTerrainPosition()
+        protected virtual void UpdateTerrainPosition()
         {
             const float distance = 10000;
             var cameraTargetPosition = _cameraFocusTarget.transform.position;
@@ -170,7 +170,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void UpdateCameraStepRotation()
+        protected virtual void UpdateCameraStepRotation()
         {
             if(!_isStepRotationInProgress) return;
 
@@ -189,7 +189,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void UpdateCameraFreeLook()
+        protected virtual void UpdateCameraFreeLook()
         {
             if(_isStepRotationInProgress) return;
 
@@ -206,7 +206,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _cameraFocusTarget.transform.rotation =  Quaternion.Lerp(cameraTargetRotation, targetCameraRotation, _settings.LookTurnSpeed * Time.deltaTime);
         }
 
-        private void UpdateCameraZoom()
+        protected virtual void UpdateCameraZoom()
         {
             var cameraLocalPosition = _camera.transform.localPosition;
             _targetZoomDistance = Mathf.Clamp(_targetZoomDistance, _settings.MinZoomDistance, _settings.MaxZoomDistance);
@@ -214,7 +214,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
                 _settings.ZoomSpeed * Time.deltaTime);
         }
 
-        private void UpdateCameraPosition()
+        protected virtual void UpdateCameraPosition()
         {
             var localPosition = transform.localPosition;
             var targetPosition = localPosition + _worldTransformDirection;
@@ -236,14 +236,14 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void RestoreInitialRotationAndZoom()
+        protected virtual void RestoreInitialRotationAndZoom()
         {
             _targetYawAngle = _initialRotation.eulerAngles.y;
             _targetPitchAngle = _initialCameraTargetRotation.eulerAngles.x;
             _targetZoomDistance = _initialZoomDistance;
         }
 
-        private void OnMove(Vector2 inputValue)
+        protected virtual void OnMove(Vector2 inputValue)
         {
             if(_cameraFollowTarget) return;
 
@@ -251,17 +251,17 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
                                        _settings.MaxMovementSpeed;
         }
 
-        private void OnZoom(float zoomDirection)
+        protected virtual void OnZoom(float zoomDirection)
         {
             _targetZoomDistance += zoomDirection * _settings.ZoomStepSize;
         }
         
-        private void OnInitialRotationRestored()
+        protected virtual void OnInitialRotationRestored()
         {
             RestoreInitialRotationAndZoom();
         }
 
-        private void OnStepRotate(float stepDirection)
+        protected virtual void OnStepRotate(float stepDirection)
         {
             var closestStepIndex = Mathf.RoundToInt(transform.rotation.eulerAngles.y / _settings.StepTurnAngle);
 
@@ -274,7 +274,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _isStepRotationInProgress = true;
         }
 
-        private void OnFreeRotate(Vector2 inputDelta)
+        protected virtual void OnFreeRotate(Vector2 inputDelta)
         {
             _isStepRotationInProgress = false;
             _freeLookRotation += inputDelta;

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
@@ -57,7 +58,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             set => _settings = value;
         }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             SwitchInputActionAsset(_inputActionAsset);
             if (_isUsingNewInputSystem)
@@ -66,7 +67,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             if(!_isInputEnabled) return;
 
@@ -156,7 +157,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        public void SwitchInputActionAsset(InputActionAsset inputActionAsset)
+        public virtual void SwitchInputActionAsset(InputActionAsset inputActionAsset)
         {
             _inputActionAsset = inputActionAsset;
             _inputActionMap = _inputActionAsset ? _inputActionAsset.FindActionMap(_inputActionMapName) : null;
@@ -167,7 +168,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void GetActionsAndRegisterBindings()
+        protected virtual void GetActionsAndRegisterBindings()
         {
             _moveAction = _inputActionMap.FindAction(_moveActionName, true);
             _zoomAction = _inputActionMap.FindAction(_zoomActionName, true);
@@ -182,7 +183,7 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _restoreInitialRotationAction.performed += OnInitialRotationRestored;
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (_isUsingNewInputSystem)
             {
@@ -193,35 +194,36 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             }
         }
 
-        private void OnInitialRotationRestored(InputAction.CallbackContext context)
+        protected virtual void OnInitialRotationRestored(InputAction.CallbackContext context)
         {
             if(!context.performed) return;
 
             OnRestoreInitialRotationActionEvent?.Invoke();
         }
 
-        private void OnStepRotate(InputAction.CallbackContext context)
+        protected virtual void OnStepRotate(InputAction.CallbackContext context)
         {
             if(!context.performed) return;
 
             OnStepRotationActionEvent?.Invoke(context.ReadValue<float>());
         }
 
-        private void OnZoom(InputAction.CallbackContext context)
+        protected virtual void OnZoom(InputAction.CallbackContext context)
         {
             if(!context.performed) return;
+            if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
 
             OnCameraZoomActionEvent?.Invoke(context.ReadValue<float>());
         }
 
-        private void OnMove(InputAction.CallbackContext context)
+        protected virtual void OnMove(InputAction.CallbackContext context)
         {
             if(!context.performed) return;
 
             OnCameraMoveActionEvent?.Invoke(context.ReadValue<Vector2>());
         }
 
-        public void Enable(bool isEnabled)
+        public virtual void Enable(bool isEnabled)
         {
             _isInputEnabled = isEnabled;
 
