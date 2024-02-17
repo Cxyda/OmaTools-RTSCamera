@@ -49,13 +49,16 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime
         [MenuItem("GameObject/O.M.A.Tools/Camera/Create Camera Bounds", priority = -200)]
         public static void CreateRTSCameraBounds()
         {
-            var cameraBoundsObject = new GameObject("CameraBounds", typeof(BoxCollider))
+            var cameraBoundsObject = new GameObject("CameraBounds")
                 {
                     transform =
                     {
                         localScale = new Vector3(50, 20, 50)
-                    }
+                    },
+                    layer = LayerMask.NameToLayer("Ignore Raycast"),
                 };
+            var boxCollider = cameraBoundsObject.AddComponent<BoxCollider>();
+            boxCollider.isTrigger = true;
             var rtsCameraBoundsVolume = cameraBoundsObject.AddComponent<RTSCameraBoundsVolume>();
             var rtsCameraComponent = Object.FindObjectOfType<RTSCameraComponent>();
             if (rtsCameraComponent != null)
