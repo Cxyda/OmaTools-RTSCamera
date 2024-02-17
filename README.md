@@ -34,11 +34,6 @@ to your dependencies.
 1) In Unity Select *O.M.A.Tools > Cameras > Create RTSCamera* from Unity's tools menu
 2) The *RTSCameraRig* GameObject will be spawned in the Scene.
 
-## How To Customize
-1) The default settings file is located at **/Packages/OMA-Tools RTS Camera/Runtime/Resources/Settings**
-2) Enable the features you like
-3) Hit the Play! button
-4) Tweak the settings of the RTSCameraSettings ScriptableObject
 
 ## Known Issues
 - No issues known

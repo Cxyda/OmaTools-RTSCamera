@@ -161,6 +161,10 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _inputActionAsset = inputActionAsset;
             _inputActionMap = _inputActionAsset ? _inputActionAsset.FindActionMap(_inputActionMapName) : null;
             _isUsingNewInputSystem = _inputActionAsset && _inputActionMap != null;
+            if (_isUsingNewInputSystem)
+            {
+                _inputActionAsset.Enable();
+            }
         }
 
         private void GetActionsAndRegisterBindings()
