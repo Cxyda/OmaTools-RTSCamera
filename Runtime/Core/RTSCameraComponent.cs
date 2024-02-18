@@ -1,4 +1,5 @@
-﻿using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
+﻿using System;
+using Plugins.O.M.A.Games.RTSCamera.Runtime.Utility;
 using UnityEngine;
 
 namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
@@ -92,6 +93,15 @@ namespace Plugins.O.M.A.Games.RTSCamera.Runtime.Core
             _initialZoomDistance = _targetZoomDistance;
             
             RestoreInitialRotationAndZoom();
+        }
+
+        private void OnDestroy()
+        {
+            InputComponent.OnCameraMoveActionEvent -= OnMove;
+            InputComponent.OnFreeRotationActionEvent -= OnFreeRotate;
+            InputComponent.OnCameraZoomActionEvent -= OnZoom;
+            InputComponent.OnStepRotationActionEvent -= OnStepRotate;
+            InputComponent.OnRestoreInitialRotationActionEvent -= OnInitialRotationRestored;
         }
 
         protected virtual void OnEnable()
